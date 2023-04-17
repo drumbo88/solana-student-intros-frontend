@@ -28,4 +28,23 @@ export class StudentIntro {
 		return buffer.slice(0, this.borshInstructionSchema.getSpan(buffer))
 	}
 
+    static borshAccountSchema = borsh.struct([
+        borsh.bool('initialized'),
+        borsh.str('name'),
+        borsh.str('message'),
+      ])
+
+    static deserialize(buffer?: Buffer): StudentIntro|null {
+        if (!buffer) {
+            return null
+        }
+
+        try {
+            const { name, message } = this.borshAccountSchema.decode(buffer)
+            return new StudentIntro(name, message)
+        } catch(error) {
+            console.log('Deserialization error:', error)
+            return null
+        }
+    }
 }
